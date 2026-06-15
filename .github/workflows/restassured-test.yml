@@ -46,15 +46,26 @@ jobs:
           name: allure-results
           path: target/allure-results
 
-      - name: Install utilities and Allure commandline
+      - name: "Debug: list target folder after tests"
         if: always()
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y wget unzip
+          echo "Listing repo root:"
+          ls -la
+          echo "Listing target (if exists):"
+          ls -la target || true
+
+      - name: "Install Allure CLI (no apt-get/unzip required)"
+        if: always()
+        run: |
+          # Download Allure zip and extract using the JDK 'jar' tool to avoid apt-get/unzip issues
           ALLURE_VER=2.29.1
+          echo "Downloading Allure ${ALLURE_VER}"
           wget -q https://github.com/allure-framework/allure2/releases/download/${ALLURE_VER}/allure-${ALLURE_VER}.zip -O /tmp/allure.zip
-          unzip -q /tmp/allure.zip -d /opt/
+          mkdir -p /opt/allure-${ALLURE_VER}
+          # Use jar to extract the zip (jar is available with JDK)
+          (cd /opt/allure-${ALLURE_VER} && jar -xf /tmp/allure.zip)
           echo "/opt/allure-${ALLURE_VER}/bin" >> $GITHUB_PATH
+          echo "Allure installed to /opt/allure-${ALLURE_VER}"
 
       - name: Generate Allure HTML report
         if: always()
