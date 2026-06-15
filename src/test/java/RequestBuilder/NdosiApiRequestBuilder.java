@@ -26,6 +26,11 @@ public class NdosiApiRequestBuilder {
 
         userToken = response.jsonPath().getString("data.token");
 
+        if (userToken == null || userToken.isEmpty()) {
+            throw new AssertionError("Token is missing in login response!");
+        }
+
+
         return response;
     }
 }
