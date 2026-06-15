@@ -13,7 +13,7 @@ public class NdosiApiRequestBuilder {
     public static String userToken;
 
 
-    public static Response loginUser() {
+    public static Response loginRequest() {
         Response response = RestAssured.given()
                 .baseUri(ndosiApiBaseUrl)
                 .basePath(loginPath)
