@@ -4,9 +4,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  Workflow_dispatch:
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -47,3 +45,30 @@ jobs:
         with:
           name: allure-results
           path: target/allure-results
+
+      - name: Install utilities and Allure commandline
+        if: always()
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y wget unzip
+          ALLURE_VER=2.29.1
+          wget -q https://github.com/allure-framework/allure2/releases/download/${ALLURE_VER}/allure-${ALLURE_VER}.zip -O /tmp/allure.zip
+          unzip -q /tmp/allure.zip -d /opt/
+          echo "/opt/allure-${ALLURE_VER}/bin" >> $GITHUB_PATH
+
+      - name: Generate Allure HTML report
+        if: always()
+        run: |
+          # Generate report from results (if results exist)
+          if [ -d target/allure-results ]; then
+            allure generate target/allure-results -o target/allure-report --clean || true
+          else
+            echo "No allure results found at target/allure-results"
+          fi
+
+      - name: Upload Allure HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: target/allure-report
