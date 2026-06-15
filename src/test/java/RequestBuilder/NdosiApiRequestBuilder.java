@@ -10,6 +10,7 @@ import static PayloadBuilder.NdosiApiPayloadBuilder.*;
 public class NdosiApiRequestBuilder {
 
     public static String loginPath = "login";
+    public static String registerPath = "register";
     public static String userToken;
 
 
@@ -30,6 +31,19 @@ public class NdosiApiRequestBuilder {
             throw new AssertionError("Token is missing in login response!");
         }
 
+        return response;
+    }
+
+    public static Response registerRequest() {
+        Response response = RestAssured.given()
+                .baseUri(ndosiApiBaseUrl)
+                .basePath(registerPath)
+                .contentType(ContentType.JSON)
+                .log().all()
+                .body(registerPayload().toJSONString())
+                .post()
+                .then()
+                .extract().response();
 
         return response;
     }
