@@ -6,7 +6,8 @@
 
     <test name="API Tests">
         <packages>
-            <package name="tests"/>
+            <!-- Package names are case-sensitive on Linux runners; project uses package 'Tests' -->
+            <package name="Tests"/>
         </packages>
     </test>
 </suite>
